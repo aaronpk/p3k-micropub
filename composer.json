@@ -1,7 +1,7 @@
 {
   "name": "p3k/micropub",
   "type": "library",
-  "description": "Utilities to help handle Micropub requests when building a server",
+  "description": "Utilities to help handle Micropub requests when building servers and clients",
   "keywords": ["p3k","indieweb","micropub"],
   "license": "Apache-2.0",
   "authors" : [
