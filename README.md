@@ -3,6 +3,26 @@ p3k\Micropub
 
 [![Build Status](https://travis-ci.org/aaronpk/p3k-micropub?branch=master)](https://travis-ci.org/aaronpk/p3k-micropub)
 
+Usage
+-----
+
+### Form-Encoded Input
+
+Create a new Micropub Request object given form-encoded input:
+
+```php
+$request = \p3k\Micropub\Request::createFromPostArray($_POST);
+```
+
+or if you're using a framework like Laravel which has already parsed the `$_POST` input variable:
+
+```php
+$request = \p3k\Micropub\Request::createFromPostArray(Request::all());
+```
+
+
+### JSON Input
+
 
 
 
