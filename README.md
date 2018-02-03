@@ -1,7 +1,7 @@
 p3k\Micropub
 ============
 
-[![Build Status](https://travis-ci.org/aaronpk/p3k-micropub?branch=master)](https://travis-ci.org/aaronpk/p3k-micropub)
+[![Build Status](https://travis-ci.org/aaronpk/p3k-micropub.svg?branch=master)](https://travis-ci.org/aaronpk/p3k-micropub)
 
 Usage
 -----
