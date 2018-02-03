@@ -82,10 +82,10 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('{"error":"invalid_input","error_property":null,"error_description":"No Micropub request properties were found in the input"}', $request->__toString());
+    $this->assertEquals('{"error":"invalid_input","error_property":null,"error_description":"No Micropub request data was found in the input"}', $request->__toString());
     $this->assertEquals('invalid_input', $request->error);
     $this->assertEquals(null, $request->error_property);
-    $this->assertEquals('No Micropub request properties were found in the input', $request->error_description);
+    $this->assertEquals('No Micropub request data was found in the input', $request->error_description);
 
     $this->expectException(\p3k\Micropub\Exception::class);
     $request->foo;
@@ -160,6 +160,25 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
     $this->assertEquals('x-foo', $request->error_property);
+  }
+
+  public function testDeleteAction() {
+    $_POST = [
+      'action' => 'delete',
+      'url' => 'http://example.com/100'
+    ];
+    $request = \p3k\Micropub\Request::createFromPostArray($_POST);
+    $this->assertEquals('delete', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+  }
+
+  public function testInvalidActionMissingURL() {
+    $_POST = [
+      'action' => 'delete',
+    ];
+    $request = \p3k\Micropub\Request::createFromPostArray($_POST);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('url', $request->error_property);
   }
 
 }

@@ -63,8 +63,18 @@ class Request {
         }
       }
 
+    } elseif(isset($input['action'])) {
+
+      // Actions require a URL
+      if(!isset($input['url'])) {
+        return new Error('invalid_input', 'url', 'Micropub actions require a URL property');
+      }
+
+      $request->_action = $input['action'];
+      $request->_url = $input['url'];
+
     } else {
-      return 'TODO';
+      return new Error('invalid_input', null, 'No Micropub request data was found in the input');
     }
 
     return $request;    
@@ -107,10 +117,21 @@ class Request {
         }
       }
 
-      return $request;
+    } elseif(isset($POST['action'])) {
+
+      // Actions require a URL
+      if(!isset($POST['url'])) {
+        return new Error('invalid_input', 'url', 'Micropub actions require a URL property');
+      }
+
+      $request->_action = $POST['action'];
+      $request->_url = $POST['url'];
+
     } else {
-      return new Error('invalid_input', null, 'No Micropub request properties were found in the input');
+      return new Error('invalid_input', null, 'No Micropub request data was found in the input');
     }
+
+    return $request;
   }
 
   public function toMf2() {
@@ -126,6 +147,8 @@ class Request {
         return $this->_action;
       case 'commands':
         return $this->_commands;
+      case 'url':
+        return $this->_url;
       case 'error':
         return false;
     }

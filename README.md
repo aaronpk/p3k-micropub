@@ -26,9 +26,11 @@ $request = \p3k\Micropub\Request::createFromPostArray(Request::all());
 Create a new Micropub Request object given an array from JSON input:
 
 ```php
-$input = json_decode(file_get_contents('php://input'));
+$input = json_decode(file_get_contents('php://input'), true);
 $request = \p3k\Micropub\Request::createFromJSONObject($input);
 ```
+
+(This actually works given either an Object or Array created from the JSON, but internally it uses an array so it's more efficient to decode it to an array at first.)
 
 
 

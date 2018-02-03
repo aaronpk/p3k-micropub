@@ -100,4 +100,35 @@ class JSONInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('content', $request->error_property);
   }
 
+  public function testFailOnInvalidInput() {
+    $input = [
+      'not' => 'micropub'
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('{"error":"invalid_input","error_property":null,"error_description":"No Micropub request data was found in the input"}', $request->__toString());
+    $this->assertEquals('invalid_input', $request->error);
+    $this->assertEquals(null, $request->error_property);
+    $this->assertEquals('No Micropub request data was found in the input', $request->error_description);
+  }
+
+  public function testDeleteAction() {
+    $input = [
+      'action' => 'delete',
+      'url' => 'http://example.com/100'
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertEquals('delete', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+  }
+
+  public function testInvalidActionMissingURL() {
+    $input = [
+      'action' => 'delete',
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('url', $request->error_property);
+  }
+
 }
