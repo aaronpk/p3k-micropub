@@ -31,6 +31,10 @@ class Request {
         if(is_array($v) && !isset($v[0]))
           return new Error('invalid_input', $k, 'Values in form-encoded input can only be numeric indexed arrays');
 
+        if(is_array($v) && isset($v[0]) && is_array($v[0])) {
+          return new Error('invalid_input', $k, 'Nested objects are not allowed in form-encoded requests');
+        }
+
         // All values in mf2 json are arrays
         if(!is_array($v))
           $v = [$v];

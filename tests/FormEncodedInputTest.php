@@ -113,7 +113,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(true, $request->commands == $commands);
   }
 
-  public function testNamedArrayKeyInputs() {
+  public function testFailOnNamedArrayKeyInputs() {
     $_POST = [
       'h' => 'entry',
       'content' => [
@@ -123,6 +123,23 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
     $this->assertEquals('content', $request->property);
+  }
+
+  public function testFailOnNestedValues() {
+    $_POST = [
+      'h' => 'entry',
+      'x-foo' => [
+        [
+          'type' => 'foo',
+          'properties' => [
+            'bar' => 'baz',
+          ]
+        ]
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromPostArray($_POST);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('x-foo', $request->property);
   }
 
 }
