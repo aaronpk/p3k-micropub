@@ -20,7 +20,6 @@ or if you're using a framework like Laravel which has already parsed the `$_POST
 $request = \p3k\Micropub\Request::createFromPostArray(Request::all());
 ```
 
-
 ### JSON Input
 
 Create a new Micropub Request object given an array from JSON input:
@@ -32,8 +31,6 @@ $request = \p3k\Micropub\Request::createFromJSONObject($input);
 
 (This actually works given either an Object or Array created from the JSON, but internally it uses an array so it's more efficient to decode it to an array at first.)
 
-
-
 ### Arbitrary Input
 
 If you don't know whether the client has sent a form-encoded or JSON request, you can use the method below to automatically detect the type of input and create the request object. Note that you'll need to pass the raw string input into this function.
@@ -42,8 +39,6 @@ If you don't know whether the client has sent a form-encoded or JSON request, yo
 $input = file_get_contents('php://input');
 $request = \p3k\Micropub\Request::createFromString($input);
 ```
-
-
 
 ### Handling Errors
 
@@ -60,6 +55,75 @@ if($request->error) {
 
 if(get_class($request) == \p3k\Micropub\Error::class) {
   // Another way to test for errors
+}
+
+```
+
+### Handling the Request
+
+Now that you have a `$request` object corresponding to the Micropub request, you can inspect it to determine how to handle the request. An outline illustrating a basic Micropub workflow is below.
+
+```php
+switch($request->action) {
+  case 'create':
+
+    // The type of Microformats object being created:
+    $request->type; // typically this is `h-entry`
+
+    // All the values of the post are available in this array:
+    $request->properties;
+
+    /* 
+      {
+        "content": ["This is a plaintext note"]
+      }
+
+      {
+        "name": ["Hello World"],
+        "content": [{"html": "This is an <i>HTML</i> blog post"]
+      }
+    */
+
+    // Any Micropub actions such as mp-syndicate-to are available in this array:
+    foreach($request->commands as $command=>$value) {
+      switch($command) {
+        case 'mp-syndicate-to': 
+          // ...
+          break;
+        // ... etc
+      }
+    }
+
+    break;
+  case 'update':
+    // The URL being updated is available here
+    $request->url;
+
+    // ... retrieve the post given by that URL
+
+    // Update actions have three parts: replace, add and delete
+    // See https://www.w3.org/TR/micropub/#update for more details
+
+    foreach($request->update['replace'] as $key=>$value) {
+
+    }
+
+    foreach($request->update['add'] as $key=>$value) {
+      
+    }
+
+    foreach($request->update['delete'] as $key=>$value) {
+      
+    }
+
+    break;
+  case 'delete':
+    // The URL being deleted is available here:
+    $request->url;
+
+    // ... you'll want to retrieve that post and delete it
+
+    break;
 }
 
 ```

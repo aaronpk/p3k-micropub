@@ -39,6 +39,33 @@ class JSONInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(true, $request->toMf2() == $expected);
   }
 
+  public function testCreateFromJSONObjectWithHTMLContent() {
+    $input = json_decode(json_encode([
+      'type' => ['h-entry'],
+      'properties' => [
+        'content' => [
+          [
+            'html' => 'Hello World'
+          ]
+        ]
+      ]
+    ]));
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $expected = [
+      'type' => ['h-entry'],
+      'properties' => [
+        'content' => [
+          [
+            'html' => 'Hello World'
+          ]
+        ]
+      ]
+    ];
+    $this->assertEquals('create', $request->action);
+    $this->assertEquals(['h-entry'], $request->toMf2()['type']);
+    $this->assertEquals(true, $request->toMf2() == $expected);
+  }
+
   public function testMPActions() {
     $input = [
       'type' => ['h-entry'],
