@@ -131,4 +131,116 @@ class JSONInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('url', $request->error_property);
   }
 
+  public function testUpdateReplaceContent() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'replace' => [
+        'content' => ['Hello Moon']
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertEquals('update', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+    $this->assertEquals([
+      'replace' => [
+        'content' => ['Hello Moon']
+      ],
+      'add' => [],
+      'delete' => []
+    ], $request->update);
+  }
+
+  public function testUpdateAddCategory() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'add' => [
+        'category' => ['indieweb']
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertEquals('update', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+    $this->assertEquals([
+      'replace' => [],
+      'add' => [
+        'category' => ['indieweb']
+      ],
+      'delete' => []
+    ], $request->update);
+  }
+
+  public function testUpdateDeleteCategoryValue() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'delete' => [
+        'category' => ['indieweb']
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertEquals('update', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+    $this->assertEquals([
+      'replace' => [],
+      'add' => [],
+      'delete' => [
+        'category' => ['indieweb']
+      ],
+    ], $request->update);
+  }
+
+  public function testUpdateDeleteCategoryProperty() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'delete' => ['category'],
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertEquals('update', $request->action);
+    $this->assertEquals('http://example.com/100', $request->url);
+    $this->assertEquals([
+      'replace' => [],
+      'add' => [],
+      'delete' => ['category'],
+    ], $request->update);
+  }
+
+  public function testInvalidUpdate() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'replace' => 'foo'
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('replace', $request->error_property);
+  }
+
+  public function testInvalidUpdateReplace() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'replace' => [
+        'content' => 'Hello Moon'
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('replace.content', $request->error_property);
+  }
+
+  public function testInvalidUpdateDelete() {
+    $input = [
+      'action' => 'update',
+      'url' => 'http://example.com/100',
+      'delete' => [
+        'category' => 'indieweb'
+      ]
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('delete.category', $request->error_property);
+  }
 }

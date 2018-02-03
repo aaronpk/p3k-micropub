@@ -181,4 +181,14 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('url', $request->error_property);
   }
 
+  public function testFailForUpdateAction() {
+    $_POST = [
+      'action' => 'update',
+      'url' => 'http://example.com/100'
+    ];
+    $request = \p3k\Micropub\Request::createFromPostArray($_POST);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('action', $request->error_property);
+  }
+
 }

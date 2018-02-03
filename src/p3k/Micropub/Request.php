@@ -8,6 +8,11 @@ class Request {
   private $_type;
   private $_properties = [];
   private $_commands = [];
+  private $_update = [
+    'replace' => [],
+    'add' => [],
+    'delete' => [],
+  ];
 
   public static function createFromString($string) {
     // Attempt to json-decode
@@ -73,6 +78,22 @@ class Request {
       $request->_action = $input['action'];
       $request->_url = $input['url'];
 
+      if($input['action'] == 'update') {
+        foreach(array_keys($request->_update) as $a) {
+          if(isset($input[$a])) {
+            if(!is_array($input[$a])) {
+              return new Error('invalid_input', $a, 'Invalid syntax for update action');
+            }
+            foreach($input[$a] as $p=>$v) {
+              if($p != 'delete' && !is_array($v)) {
+                return new Error('invalid_input', $a.'.'.$p, 'All values in update actions must be arrays');
+              }
+            }
+            $request->_update[$a] = $input[$a];
+          }
+        }
+      }
+
     } else {
       return new Error('invalid_input', null, 'No Micropub request data was found in the input');
     }
@@ -119,6 +140,10 @@ class Request {
 
     } elseif(isset($POST['action'])) {
 
+      if($POST['action'] == 'update') {
+        return new Error('invalid_input', 'action', 'Micropub update actions require using the JSON syntax');
+      }
+
       // Actions require a URL
       if(!isset($POST['url'])) {
         return new Error('invalid_input', 'url', 'Micropub actions require a URL property');
@@ -147,6 +172,8 @@ class Request {
         return $this->_action;
       case 'commands':
         return $this->_commands;
+      case 'update':
+        return $this->_update;
       case 'url':
         return $this->_url;
       case 'error':
