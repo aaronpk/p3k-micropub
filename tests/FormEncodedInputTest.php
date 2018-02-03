@@ -1,10 +1,6 @@
 <?php
 class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
 
-  public function testTest() {
-    $this->assertEquals(1, 1);
-  }
-
   public function testBasicHEntry() {
     $_POST = [
       'h' => 'entry',
@@ -95,11 +91,11 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $request->foo;
   }
 
-  public function testMPActions() {
+  public function testSingleMPAction() {
     $_POST = [
       'h' => 'entry',
       'content' => 'Hello World',
-      'mp-syndicate-to' => ['twitter'],
+      'mp-syndicate-to' => 'twitter',
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $expected = [
@@ -110,6 +106,27 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $commands = [
       'mp-syndicate-to' => ['twitter']
+    ];
+    $this->assertEquals('create', $request->action);
+    $this->assertEquals(true, $request->toMf2() == $expected);
+    $this->assertEquals(true, $request->commands == $commands);
+  }
+
+  public function testMultipleMPActions() {
+    $_POST = [
+      'h' => 'entry',
+      'content' => 'Hello World',
+      'mp-syndicate-to' => ['twitter','facebook'],
+    ];
+    $request = \p3k\Micropub\Request::createFromPostArray($_POST);
+    $expected = [
+      'type' => ['h-entry'],
+      'properties' => [
+        'content' => ['Hello World']
+      ]
+    ];
+    $commands = [
+      'mp-syndicate-to' => ['twitter','facebook']
     ];
     $this->assertEquals('create', $request->action);
     $this->assertEquals(true, $request->toMf2() == $expected);

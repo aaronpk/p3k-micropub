@@ -23,6 +23,23 @@ $request = \p3k\Micropub\Request::createFromPostArray(Request::all());
 
 ### JSON Input
 
+Create a new Micropub Request object given an array from JSON input:
+
+```php
+$input = json_decode(file_get_contents('php://input'));
+$request = \p3k\Micropub\Request::createFromJSONObject($input);
+```
+
+
+
+### Arbitrary Input
+
+If you don't know whether the client has sent a form-encoded or JSON request, you can use the method below to automatically detect the type of input and create the request object. Note that you'll need to pass the raw string input into this function.
+
+```php
+$input = file_get_contents('php://input');
+$request = \p3k\Micropub\Request::createFromString($input);
+```
 
 
 
