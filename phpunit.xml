@@ -9,7 +9,7 @@
   </testsuites>
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">src/Micropub</directory>
+      <directory suffix=".php">src/p3k</directory>
       <exclude>
       </exclude>
     </whitelist>
