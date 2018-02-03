@@ -20,6 +20,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('create', $request->action);
     $this->assertEquals(true, $request->toMf2() == $expected);
     $this->assertEquals(null, $request->foo);
+    $this->assertEquals(false, $request->error);
   }
 
   public function testHEntryWithArrayValues() {
@@ -65,7 +66,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('url', $request->property);
+    $this->assertEquals('url', $request->error_property);
   }
 
   public function testFailOnHWithAction() {
@@ -76,7 +77,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('action', $request->property);
+    $this->assertEquals('action', $request->error_property);
   }
 
   public function testFailOnInvalidInput() {
@@ -87,9 +88,11 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
     $this->assertEquals('{"error":"invalid_input","error_property":null,"error_description":"No Micropub request properties were found in the input"}', $request->__toString());
     $this->assertEquals('invalid_input', $request->error);
-    $this->assertEquals(null, $request->property);
-    $this->assertEquals('No Micropub request properties were found in the input', $request->description);
-    $this->assertEquals(null, $request->foo);
+    $this->assertEquals(null, $request->error_property);
+    $this->assertEquals('No Micropub request properties were found in the input', $request->error_description);
+
+    $this->expectException(\p3k\Micropub\Exception::class);
+    $request->foo;
   }
 
   public function testMPActions() {
@@ -122,7 +125,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('content', $request->property);
+    $this->assertEquals('content', $request->error_property);
   }
 
   public function testFailOnNestedValues() {
@@ -139,7 +142,7 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
     $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('x-foo', $request->property);
+    $this->assertEquals('x-foo', $request->error_property);
   }
 
 }

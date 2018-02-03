@@ -29,12 +29,12 @@ class Error {
     switch($k) {
       case 'error':
         return $this->_error;
-      case 'property':
+      case 'error_property':
         return $this->_property;
-      case 'description':
+      case 'error_description':
         return $this->_description;
     }
-    return null;
+    throw new Exception('A Micropub error occurred, and you attempted to access the Error object as though it was a successful request. You should check that the object returned was an error and handle it properly.');
   }
 
 }

@@ -65,6 +65,8 @@ class Request {
         return $this->_action;
       case 'commands':
         return $this->_commands;
+      case 'error':
+        return false;
     }
     return null;
   }

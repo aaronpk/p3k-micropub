@@ -26,6 +26,26 @@ $request = \p3k\Micropub\Request::createFromPostArray(Request::all());
 
 
 
+### Handling Errors
+
+If the input data could not be interpreted as a Micropub request, the object returned will be an error instead. You can check for this by testing whether the type of object returned is a `\p3k\Micropub\Error`, or you can test the `error` property.
+
+```php
+$request = \p3k\Micropub\Request::createFromPostArray($_POST);
+
+if($request->error) {
+  // Something went wrong. More information is available here:
+  // $request->error_property
+  // $request->error_description
+}
+
+if(get_class($request) == \p3k\Micropub\Error::class) {
+  // Another way to test for errors
+}
+
+```
+
+
 
 License
 -------
