@@ -14,6 +14,24 @@ class Request {
     'delete' => [],
   ];
 
+  public static function create($input) {
+    // Attempt to detect form-encoded or JSON requests
+    if(is_object($input))
+      return self::createFromJSONObject($input);
+
+    if(is_array($input)) {
+      if(isset($input['h']))
+        return self::createFromPostArray($input);
+      if(isset($input['type']))
+        return self::createFromJSONObject($input);
+    }
+
+    if(is_string($input))
+      return self::createFromString($input);
+
+    return new Error('invalid_input', null, 'Input could not be parsed as either JSON or form-encoded');
+  }
+
   public static function createFromString($string) {
     // Attempt to json-decode
     $json = @json_decode($string, true);
@@ -31,7 +49,7 @@ class Request {
     // Otherwise fail
     return new Error('invalid_input', null, 'Input could not be parsed as either JSON or form-encoded');
   }
-
+  
   public static function createFromJSONObject($input) {
     $request = new Request();
 

@@ -6,18 +6,27 @@ p3k\Micropub
 Usage
 -----
 
+### Creating the Request Object
+
+If you don't know whether the client has sent a form-encoded or JSON request, you can use the method below to automatically detect the type of input and create the request object. You can pass the raw string input into this function, or an array.
+
+```php
+$input = file_get_contents('php://input');
+$request = \p3k\Micropub\Request::create($input);
+```
+
+If you are using a framework like Laravel which handles parsing the input already, you can pass an array with the input:
+
+```php
+$request = \p3k\Micropub\Request::create(Request::all());
+```
+
 ### Form-Encoded Input
 
-Create a new Micropub Request object given form-encoded input:
+If you know you are handling a form-encoded request, create a new Micropub Request object given form-encoded input:
 
 ```php
 $request = \p3k\Micropub\Request::createFromPostArray($_POST);
-```
-
-or if you're using a framework like Laravel which has already parsed the `$_POST` input variable:
-
-```php
-$request = \p3k\Micropub\Request::createFromPostArray(Request::all());
 ```
 
 ### JSON Input
@@ -30,15 +39,6 @@ $request = \p3k\Micropub\Request::createFromJSONObject($input);
 ```
 
 (This actually works given either an Object or Array created from the JSON, but internally it uses an array so it's more efficient to decode it to an array at first.)
-
-### Arbitrary Input
-
-If you don't know whether the client has sent a form-encoded or JSON request, you can use the method below to automatically detect the type of input and create the request object. Note that you'll need to pass the raw string input into this function.
-
-```php
-$input = file_get_contents('php://input');
-$request = \p3k\Micropub\Request::createFromString($input);
-```
 
 ### Handling Errors
 
@@ -126,6 +126,14 @@ switch($request->action) {
     break;
 }
 
+```
+
+### Output as Microformats JSON
+
+You can output the Micropub request as a Microformats JSON array.
+
+```php
+print_r($request->toMf2());
 ```
 
 
