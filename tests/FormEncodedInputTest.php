@@ -54,15 +54,22 @@ class FormEncodedInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(true, $request->toMf2() == $expected);
   }
 
-  public function testFailOnURLInInput() {
+  public function testAllowURLInInput() {
     $_POST = [
       'h' => 'entry',
       'content' => 'Hello World',
-      'url' => 'http://example.com/'
+      'url' => 'http://example.com/100'
     ];
     $request = \p3k\Micropub\Request::createFromPostArray($_POST);
-    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
-    $this->assertEquals('url', $request->error_property);
+    $this->assertEquals('create', $request->action);
+    $expected = [
+      'type' => ['h-entry'],
+      'properties' => [
+        'content' => ['Hello World'],
+        'url' => ['http://example.com/100'],
+      ]
+    ];
+    $this->assertEquals(true, $request->toMf2() == $expected);
   }
 
   public function testFailOnHWithAction() {

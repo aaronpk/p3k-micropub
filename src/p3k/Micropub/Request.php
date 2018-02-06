@@ -49,7 +49,7 @@ class Request {
     // Otherwise fail
     return new Error('invalid_input', null, 'Input could not be parsed as either JSON or form-encoded');
   }
-  
+
   public static function createFromJSONObject($input) {
     $request = new Request();
 
@@ -127,10 +127,6 @@ class Request {
       $request->_type = ['h-'.$POST['h']];
       unset($POST['h']);
       unset($POST['access_token']);
-
-      // Can't create posts while specifying a URL
-      if(isset($POST['url']))
-        return new Error('invalid_input', 'url', 'Cannot create posts while specifying a URL');
 
       // Can't specify an action when creating a post
       if(isset($POST['action']))
