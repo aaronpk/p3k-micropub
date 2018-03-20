@@ -20,8 +20,9 @@ class JSONInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals(true, $request->toMf2() == $expected);
   }
 
-  public function testCreateFromJSONObject() {
+  public function testCreateWithAccessToken() {
     $input = json_decode(json_encode([
+      'access_token' => '12345678',
       'type' => ['h-entry'],
       'properties' => [
         'content' => ['Hello World']
