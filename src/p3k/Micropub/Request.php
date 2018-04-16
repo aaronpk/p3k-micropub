@@ -186,6 +186,8 @@ class Request {
         return $this->_action;
       case 'commands':
         return $this->_commands;
+      case 'properties':
+        return $this->_properties;
       case 'update':
         return $this->_update;
       case 'url':
