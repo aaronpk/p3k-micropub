@@ -182,6 +182,8 @@ class Request {
 
   public function __get($k) {
     switch($k) {
+      case 'type':
+        return reset($this->_type);
       case 'action':
         return $this->_action;
       case 'commands':
