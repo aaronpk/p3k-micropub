@@ -61,8 +61,13 @@ class Request {
 
     if(isset($input['type'])) {
 
-      if(!is_array($input['type']))
+      if(!is_array($input['type'])) {
         return new Error('invalid_input', 'type', 'Property type must be an array of Microformat vocabularies');
+      }
+
+      if (count($input['type']) === 0) {
+        return new Error('invalid_input', 'type', 'Property type must contain at least one Microformat vocabulary');
+      }
 
       $request->_action = 'create';
       $request->_type = $input['type'];
@@ -116,7 +121,7 @@ class Request {
       return new Error('invalid_input', null, 'No Micropub request data was found in the input');
     }
 
-    return $request;    
+    return $request;
   }
 
   public static function createFromPostArray($POST) {
@@ -183,7 +188,7 @@ class Request {
   public function __get($k) {
     switch($k) {
       case 'type':
-        return reset($this->_type);
+        return $this->_type[0];
       case 'action':
         return $this->_action;
       case 'commands':

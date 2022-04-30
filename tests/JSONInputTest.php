@@ -107,6 +107,16 @@ class JSONInputTest extends PHPUnit_Framework_TestCase {
     $this->assertEquals('type', $request->error_property);
   }
 
+  public function testFailOnEmptyTypeArray() {
+    $input = [
+      'type' => [],
+      'properties' => [],
+    ];
+    $request = \p3k\Micropub\Request::createFromJSONObject($input);
+    $this->assertInstanceOf(\p3k\Micropub\Error::class, $request);
+    $this->assertEquals('type', $request->error_property);
+  }
+
   public function testFailOnMissingProperties() {
     $input = [
       'type' => ['h-entry'],
